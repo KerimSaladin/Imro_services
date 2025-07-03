@@ -9,7 +9,7 @@ import { Badge } from "../../../../components/ui/badge";
 import { Card, CardContent } from "../../../../components/ui/card";
 
 export const TestimonialsSection = (): JSX.Element => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [/*currentSlide,*/ setCurrentSlide] = useState(0);
 
   // Testimonial data for mapping
   const testimonials = [
@@ -62,7 +62,7 @@ export const TestimonialsSection = (): JSX.Element => {
   // Auto-slide effect
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % clientProfiles.length);
+      //setCurrentSlide((prev) => (prev + 1) % clientProfiles.length);
     }, 3000);
 
     return () => clearInterval(interval);
