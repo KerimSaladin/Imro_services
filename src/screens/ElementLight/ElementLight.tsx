@@ -1,14 +1,14 @@
-import React, { useEffect, useState, type JSX } from "react";
-import { Link, useNavigate } from "react-router-dom";
-// import { motion } from "framer-motion";
+import {type JSX } from "react";
+import { Link} from "react-router-dom";
+//import { motion } from "framer-motion";
 import { Button } from "../../components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuViewport,
+  //NavigationMenuTrigger,
+  //NavigationMenuViewport,
 } from "../../components/ui/navigation-menu";
 import { Separator } from "../../components/ui/separator";
 import { useAuth } from "../../contexts/AuthContext";
@@ -26,7 +26,7 @@ import logoImmro from "../../assets/logoImmro.png";
 
 export const ElementLight = (): JSX.Element => {
   const { user, logout } = useAuth();
-  const [currentSlide, setCurrentSlide] = useState(0);
+  //const [currentSlide, setCurrentSlide] = useState(0);
 
   // Client profiles data
   const clientProfiles = [
