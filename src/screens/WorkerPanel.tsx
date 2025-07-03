@@ -113,6 +113,7 @@ export const WorkerPanel: React.FC = () => {
           goldcard: employeeData.goldcard,
           service: employeeData.service
         });
+        console.log('WorkerPanel: Bookings response from backend:', response.data); // DEBUG LOG
         // Map backend data to Booking interface
         const employeeBookings: Booking[] = response.data.map((booking: any) => ({
           _id: booking.id || booking._id,

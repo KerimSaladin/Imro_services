@@ -1,5 +1,5 @@
-import React, { useState, useEffect, type JSX } from "react";
-import { motion } from "framer-motion";
+import {type JSX } from "react";
+//import { motion } from "framer-motion";
 import { Badge } from "../../../../components/ui/badge";
 import { Card, CardContent } from "../../../../components/ui/card";
 import cleaning from '../../../../assets/cleaning.png';

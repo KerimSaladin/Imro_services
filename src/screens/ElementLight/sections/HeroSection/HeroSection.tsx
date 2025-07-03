@@ -1,10 +1,10 @@
 import { ArrowRightIcon } from "lucide-react";
-import React, { type JSX } from "react";
+import { type JSX } from "react";
 import { Link } from "react-router-dom";
 // import { motion } from "framer-motion";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
-import logoImmro from "../../../../assets/logoImmro.png";
+//import logoImmro from "../../../../assets/logoImmro.png";
 
 export const HeroSection = (): JSX.Element => {
   return (

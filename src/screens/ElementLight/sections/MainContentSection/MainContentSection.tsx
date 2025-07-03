@@ -1,6 +1,6 @@
-import React, { type JSX } from "react";
-import { Button } from "../../../../components/ui/button";
-import { Input } from "../../../../components/ui/input";
+import { type JSX } from "react";
+//import { Button } from "../../../../components/ui/button";
+//import { Input } from "../../../../components/ui/input";
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import logoImmro from "../../../../assets/logoImmro.png";
 

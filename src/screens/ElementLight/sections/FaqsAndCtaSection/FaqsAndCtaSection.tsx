@@ -1,5 +1,5 @@
 import { ArrowRightIcon } from "lucide-react";
-import React, { useState, type JSX } from "react";
+import { useState, type JSX } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Badge } from "../../../../components/ui/badge";
