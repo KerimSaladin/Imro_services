@@ -97,7 +97,7 @@ export const WorkerPanel: React.FC = () => {
       setLoading(true);
       try {
         // Get current employee data from localStorage
-        const employeeData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const employeeData = JSON.parse(localStorage.getItem('employeeData') || '{}');
         if (!employeeData.isEmployee || !employeeData.id) {
           setBookings([]);
           setLoading(false);
