@@ -7,11 +7,11 @@ import {
   Mail, 
   Phone, 
   MapPin, 
-  Send, 
+  //Send, 
   ArrowLeft,
   MessageSquare,
   Clock,
-  Shield
+  //Shield
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -30,7 +30,7 @@ export const Contact: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactForm>();
 
-  const onSubmit = async (data: ContactForm) => {
+  const onSubmit = async (/*data: ContactForm*/) => {
     setLoading(true);
     try {
       // Here you would send the contact form data to your backend

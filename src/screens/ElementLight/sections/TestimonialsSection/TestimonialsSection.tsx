@@ -1,4 +1,4 @@
-import { useEffect, useState, type JSX } from "react";
+import { useEffect, type JSX } from "react";
 import { motion } from "framer-motion";
 import {
   Avatar,
@@ -9,7 +9,7 @@ import { Badge } from "../../../../components/ui/badge";
 import { Card, CardContent } from "../../../../components/ui/card";
 
 export const TestimonialsSection = (): JSX.Element => {
-  const [/*currentSlide,*/ setCurrentSlide] = useState(0);
+  //const [/*currentSlide,*/ setCurrentSlide] = useState(0);
 
   // Testimonial data for mapping
   const testimonials = [
