@@ -46,7 +46,7 @@ export const WorkerPanel: React.FC = () => {
   const { user, logout } = useAuth();
 
   // Mock bookings for demonstration
-  const mockBookings: Booking[] = [
+  /*const mockBookings: Booking[] = [
     {
       _id: '1',
       name: 'Ali Benali',
@@ -90,7 +90,7 @@ export const WorkerPanel: React.FC = () => {
       suggestedPrice: 2000,
       userResponse: 'accepted',
     },
-  ];
+  ];*/
 
   useEffect(() => {
     const fetchEmployeeBookings = async () => {

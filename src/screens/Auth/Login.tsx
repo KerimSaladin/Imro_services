@@ -18,12 +18,12 @@ interface LoginForm {
 
 export const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  //const { login } = useAuth();
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors }, watch } = useForm<LoginForm>({
+  const { register, handleSubmit, formState: { errors }, /*watch*/ } = useForm<LoginForm>({
     defaultValues: { isEmployee: false }
   });
-  const isEmployee = watch('isEmployee');
+  //const isEmployee = watch('isEmployee');
 
   const onSubmit = async (data: LoginForm) => {
     setLoading(true);

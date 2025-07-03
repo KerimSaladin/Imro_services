@@ -8,14 +8,14 @@ import { Card, CardContent, CardHeader } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { 
   CheckIcon, 
-  XIcon, 
+  //XIcon, 
   CalendarIcon, 
   ClockIcon, 
   UserIcon, 
   MailIcon, 
   PhoneIcon,
   BuildingIcon,
-  MessageSquareIcon,
+  //MessageSquareIcon,
   LogOutIcon
 } from 'lucide-react';
 import logoImmro from '../../assets/logoImmro.png';
@@ -35,6 +35,9 @@ interface Booking {
   employeeName?: string;
   employeeEmail?: string;
   employeePhone?: string;
+  userid?: string;
+  workerId?: string;
+  suggestedPrice?: number;
 }
 
 export const AdminPanel: React.FC = () => {
@@ -157,15 +160,21 @@ export const AdminPanel: React.FC = () => {
     fetchAllBookings();
   }, []);
 
-  const authorizeBooking = async (bookingId: string) => {
+  const authorizeBooking = async (booking: Booking) => {
     try {
       await axios.post('https://goimro.onrender.com/AutoriseBookService', {
-        bookingId: bookingId,
-        isaothorized: "true"
+        id: booking._id,
+        userid: booking.userid,
+        employeeId: booking.workerId,
+        service: booking.serviceType,
+        date: booking.preferredDate,
+        time: booking.preferredTime,
+        location: booking.message,
+        isaothorized: "true",
+        price: booking.suggestedPrice ? booking.suggestedPrice.toString() : ""
       });
-      
-      setBookings(bookings.map(booking => 
-        booking._id === bookingId ? { ...booking, isaothorized: "true" } : booking
+      setBookings(bookings.map(b =>
+        b._id === booking._id ? { ...b, status: "authorized" } : b
       ));
       toast.success('تم تفويض الحجز بنجاح!');
     } catch (error) {
@@ -173,15 +182,21 @@ export const AdminPanel: React.FC = () => {
     }
   };
 
-  const rejectBooking = async (bookingId: string) => {
+  const rejectBooking = async (booking: Booking) => {
     try {
       await axios.post('https://goimro.onrender.com/AutoriseBookService', {
-        bookingId: bookingId,
-        isAuthorized: "false"
+        id: booking._id,
+        userid: booking.userid,
+        employeeId: booking.workerId,
+        service: booking.serviceType,
+        date: booking.preferredDate,
+        time: booking.preferredTime,
+        location: booking.message,
+        isaothorized: "false",
+        price: booking.suggestedPrice ? booking.suggestedPrice.toString() : ""
       });
-      
-      setBookings(bookings.map(booking => 
-        booking._id === bookingId ? { ...booking, status: 'rejected' } : booking
+      setBookings(bookings.map(b =>
+        b._id === booking._id ? { ...b, status: "rejected" } : b
       ));
       toast.success('تم رفض الحجز بنجاح!');
     } catch (error) {
@@ -404,11 +419,18 @@ export const AdminPanel: React.FC = () => {
                     {booking.status === 'pending' && (
                       <div className="flex gap-2 mt-2">
                         <Button
-                          onClick={() => authorizeBooking(booking._id)}
+                          onClick={() => authorizeBooking(booking)}
                           className="bg-green-600 hover:bg-green-700 text-black"
                         >
                           <CheckIcon className="w-4 h-4 mr-2" />
                           تفويض
+                        </Button>
+                        <Button
+                          onClick={() => rejectBooking(booking)}
+                          className="bg-green-600 hover:bg-green-700 text-black"
+                        >
+                          <CheckIcon className="w-4 h-4 mr-2" />
+                          رفض
                         </Button>
                       </div>
                     )}

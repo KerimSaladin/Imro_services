@@ -25,7 +25,7 @@ interface PaymentForm {
 }
 
 // Stripe configuration from environment variables
-const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_51Rf9NHRlTQh5JEQlLkbBRTbXVInvMcnxb7zFPT9gq9ao721ZDQYfUwoHD6GenBAvGW9gnOgOV7bJVbktsCrCQvUn00qD4GFmL2';
+//const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_51Rf9NHRlTQh5JEQlLkbBRTbXVInvMcnxb7zFPT9gq9ao721ZDQYfUwoHD6GenBAvGW9gnOgOV7bJVbktsCrCQvUn00qD4GFmL2';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 export const Payment: React.FC = () => {
@@ -72,7 +72,7 @@ export const Payment: React.FC = () => {
         //throw new Error('فشل في إنشاء عملية الدفع');
       }
 
-      const paymentIntent = await response.json();
+      //const paymentIntent = await response.json();
 
       // Here you would integrate with Stripe Elements or Stripe.js
       // For now, we'll simulate a successful payment

@@ -19,7 +19,7 @@ import {
   XIcon,
   LogOutIcon,
   SearchIcon,
-  FilterIcon
+  //FilterIcon
 } from 'lucide-react';
 import logoImmro from '../assets/logoImmro.png';
 
@@ -81,7 +81,7 @@ export const UserPanel: React.FC = () => {
   ];
 
   // Mock data for demonstration
-  const mockWorkers: Worker[] = [
+  /*const mockWorkers: Worker[] = [
     {
       _id: '1',
       fullname: 'أحمد محمد',
@@ -109,7 +109,7 @@ export const UserPanel: React.FC = () => {
       rating: 4.7,
       reviews: 18
     }
-  ];
+  ];*/
 
   const mockBookings: Booking[] = [
     {
