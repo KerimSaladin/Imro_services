@@ -9,4 +9,9 @@ export default defineConfig({
     tailwindcss(),
   ],
   assetsInclude: ['**/*.ttf'],
+  preview: {
+    host: '0.0.0.0',
+    port: 10000,
+    allowedHosts: ['imro-services.onrender.com'],
+  },
 })
