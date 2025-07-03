@@ -180,25 +180,35 @@ export const UserPanel: React.FC = () => {
         }
         // Fetch all bookings and filter by user ID
         const response = await axios.get('https://goimro.onrender.com/GetBookService');
-        const userBookings: Booking[] = response.data
-          .filter((booking: any) => booking.userid === userData.id)
-          .map((booking: any) => ({
-            _id: booking.id || booking._id,
-            workerId: booking.employeeId,
-            workerName: booking.employeeName || 'غير معروف',
-            serviceType: booking.service,
-            preferredDate: booking.date,
-            preferredTime: booking.time,
-            message: booking.location,
-            status: booking.isaothorized === "true"
-              ? "authorized"
-              : booking.isaothorized === "false"
-              ? "rejected"
-              : "pending",
-            suggestedPrice: booking.price ? Number(booking.price) : undefined,
-            userResponse: booking.userResponse,
-            createdAt: booking.createdAt || new Date().toISOString()
-          }));
+        const allEmployees = await axios.get('https://goimro.onrender.com/GetEmployee');
+        const userBookings: Booking[] = await Promise.all(
+          response.data
+            .filter((booking: any) => booking.userid === userData.id)
+            .map(async (booking: any) => {
+              const worker = allEmployees.data.find((e: any) => e.id === booking.employeeId);
+              return {
+                ...booking,
+                _id: booking.id || booking._id,
+                workerId: booking.employeeId,
+                workerName: worker ? worker.fullname : 'غير معروف',
+                workerEmail: worker ? worker.email : 'غير معروف',
+                workerPhone: worker ? worker.number : 'غير معروف',
+                workerService: worker ? worker.service : 'غير معروف',
+                serviceType: booking.service,
+                preferredDate: booking.date,
+                preferredTime: booking.time,
+                message: booking.location,
+                status: booking.isaothorized === "true"
+                  ? "authorized"
+                  : booking.isaothorized === "false"
+                  ? "rejected"
+                  : "pending",
+                suggestedPrice: booking.price ? Number(booking.price) : undefined,
+                userResponse: booking.userResponse,
+                createdAt: booking.createdAt || new Date().toISOString()
+              };
+            })
+        );
         setBookings(userBookings);
       } catch (error) {
         toast.error('فشل في جلب حجوزاتك');

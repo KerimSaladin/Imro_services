@@ -32,10 +32,15 @@ interface Booking {
   preferredDate: string;
   preferredTime: string;
   message?: string;
-  status: 'pending' | 'priceSuggested' | 'confirmed' | 'rejected';
+  status: 'pending' | 'priceSuggested' | 'confirmed' | 'rejected' | 'authorized';
   createdAt: string;
   suggestedPrice?: number;
   userResponse?: 'accepted' | 'refused';
+  userid: string;
+  workerId: string;
+  userName: string;
+  userEmail: string;
+  userPhone: string;
 }
 
 export const WorkerPanel: React.FC = () => {
@@ -97,7 +102,7 @@ export const WorkerPanel: React.FC = () => {
       setLoading(true);
       try {
         // Get current employee data from localStorage
-        const employeeData = JSON.parse(localStorage.getItem('employeeData') || '{}');
+        const employeeData = JSON.parse(localStorage.getItem('workerData') || '{}');
         if (!employeeData.isEmployee || !employeeData.id) {
           setBookings([]);
           setLoading(false);
@@ -115,25 +120,52 @@ export const WorkerPanel: React.FC = () => {
         });
         console.log('WorkerPanel: Bookings response from backend:', response.data); // DEBUG LOG
         // Map backend data to Booking interface
-        const employeeBookings: Booking[] = response.data.map((booking: any) => ({
-          _id: booking.id || booking._id,
-          name: booking.userName || booking.name || 'غير معروف',
-          email: booking.userEmail || booking.email || 'غير معروف',
-          phone: booking.userPhone || booking.phone || 'غير معروف',
-          company: booking.userCompany || booking.company || '',
-          serviceType: booking.service,
-          preferredDate: booking.date,
-          preferredTime: booking.time,
-          message: booking.location,
-          status: booking.isaothorized === "true"
-            ? 'authorized'
-            : booking.isaothorized === "false"
-            ? 'rejected'
-            : 'pending',
-          suggestedPrice: booking.price ? Number(booking.price) : undefined,
-          userResponse: booking.userResponse,
-          createdAt: booking.createdAt || new Date().toISOString()
-        }));
+        const employeeBookings: Booking[] = await Promise.all(
+          response.data.map(async (booking: any) => {
+            let userName = 'غير معروف';
+            let userEmail = 'غير معروف';
+            let userPhone = 'غير معروف';
+
+            try {
+              if (booking.userid) {
+                const userResponse = await axios.get('https://goimro.onrender.com/GetUser');
+                const user = userResponse.data.find((u: any) => u.id === booking.userid);
+                if (user) {
+                  userName = user.fullname;
+                  userEmail = user.email;
+                  userPhone = user.number;
+                }
+              }
+            } catch (error) {
+              console.error('Error fetching user details:', error);
+            }
+
+            return {
+              _id: booking.id || booking._id,
+              name: userName,
+              email: userEmail,
+              phone: userPhone,
+              company: booking.userCompany || booking.company || '',
+              serviceType: booking.service,
+              preferredDate: booking.date,
+              preferredTime: booking.time,
+              message: booking.location,
+              status: booking.isaothorized === "true"
+                ? 'authorized'
+                : booking.isaothorized === "false"
+                ? 'rejected'
+                : 'pending',
+              suggestedPrice: booking.price ? Number(booking.price) : undefined,
+              userResponse: booking.userResponse,
+              createdAt: booking.createdAt || new Date().toISOString(),
+              userid: booking.userid,
+              workerId: booking.workerId,
+              userName,
+              userEmail,
+              userPhone,
+            };
+          })
+        );
         setBookings(employeeBookings);
       } catch (error) {
         toast.error('فشل في جلب حجوزاتك');
@@ -145,7 +177,7 @@ export const WorkerPanel: React.FC = () => {
     fetchEmployeeBookings();
   }, []);
 
-  const handleSuggestPrice = async (bookingId: string) => {
+  /*const handleSuggestPrice = async (bookingId: string) => {
     const price = priceInputs[bookingId];
     if (!price || isNaN(Number(price))) {
       toast.error('يرجى إدخال سعر صالح');
@@ -154,7 +186,7 @@ export const WorkerPanel: React.FC = () => {
     
     try {
       // Get current employee data
-      const employeeData = JSON.parse(localStorage.getItem('userData') || '{}');
+      const employeeData = JSON.parse(localStorage.getItem('workerData') || '{}');
       
       // Update booking with price in backend
       await axios.post('https://goimro.onrender.com/UpdateBooking', {
@@ -173,7 +205,7 @@ export const WorkerPanel: React.FC = () => {
     } catch (error) {
       toast.error('فشل في إرسال السعر المقترح');
     }
-  };
+  };*/
 
   const filteredBookings = bookings.filter(booking => 
     filter === 'all' || booking.status === filter
@@ -333,8 +365,8 @@ export const WorkerPanel: React.FC = () => {
                       </div>
                     </div>
                     {/* Price Suggestion Logic */}
-                    {booking.status === 'pending' && (
-                      <div className="flex gap-2 items-center">
+                    {booking.status === 'authorized' && (
+                      <div className="flex gap-2 items-center mt-2">
                         <Input
                           type="number"
                           min="0"
@@ -344,7 +376,33 @@ export const WorkerPanel: React.FC = () => {
                           className="w-32 bg-gray-800 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
                         />
                         <Button
-                          onClick={() => handleSuggestPrice(booking._id)}
+                          onClick={async () => {
+                            const price = priceInputs[booking._id];
+                            if (!price || isNaN(Number(price))) {
+                              toast.error('يرجى إدخال سعر صالح');
+                              return;
+                            }
+                            try {
+                              //const employeeData = JSON.parse(localStorage.getItem('workerData') || '{}');
+                              await axios.post('https://goimro.onrender.com/UpdatePrice', {
+                                id: booking._id,
+                                userid: booking.userid,
+                                employeeId: booking.workerId,
+                                service: booking.serviceType,
+                                date: booking.preferredDate,
+                                time: booking.preferredTime,
+                                location: booking.message,
+                                isaothorized: booking.status === 'authorized' ? 'true' : 'false',
+                                price: price
+                              });
+                              setBookings(bookings.map(b =>
+                                b._id === booking._id ? { ...b, suggestedPrice: Number(price), status: 'priceSuggested' } : b
+                              ));
+                              toast.success('تم إرسال السعر المقترح للعميل!');
+                            } catch (error) {
+                              toast.error('فشل في إرسال السعر المقترح');
+                            }
+                          }}
                           className="bg-blue-600 hover:bg-blue-700 text-white flex items-center"
                         >
                           <DollarSign className="w-4 h-4 mr-2" />
