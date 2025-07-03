@@ -94,79 +94,53 @@ export const WorkerPanel: React.FC = () => {
 
   useEffect(() => {
     const fetchEmployeeBookings = async () => {
+      setLoading(true);
       try {
         // Get current employee data from localStorage
         const employeeData = JSON.parse(localStorage.getItem('userData') || '{}');
-        
-        if (employeeData.isEmployee && employeeData.id) {
-          // Fetch bookings specific to this employee
-          const response = await axios.post('https://goimro.onrender.com/GetBookServiceByEmployee', {
-            fullname: employeeData.name,
-            number: employeeData.number,
-            email: employeeData.email,
-            password: employeeData.password,
-            goldcard: employeeData.goldcard,
-            service: employeeData.service
-          });
-          
-          // Transform backend data to match our Booking interface
-          const employeeBookings: Booking[] = await Promise.all(
-            response.data.map(async (booking: any) => {
-              let userName = 'Unknown User';
-              let userEmail = 'unknown@email.com';
-              let userPhone = 'Unknown';
-              let userCompany = 'Unknown';
-
-              try {
-                // Fetch user details by ID
-                if (booking.userid) {
-                  const userResponse = await axios.get('https://goimro.onrender.com/GetUser');
-                  const user = userResponse.data.find((u: any) => u.id === booking.userid);
-                  if (user) {
-                    userName = user.fullname;
-                    userEmail = user.email;
-                    userPhone = user.number;
-                    userCompany = user.goldcard || 'N/A';
-                  }
-                }
-              } catch (error) {
-                console.error('Error fetching user details:', error);
-              }
-
-              return {
-                _id: booking.id || booking._id,
-                name: userName,
-                email: userEmail,
-                phone: userPhone,
-                company: userCompany,
-                serviceType: booking.service,
-                preferredDate: booking.date,
-                preferredTime: booking.time,
-                message: booking.location,
-                status: booking.isAuthorized === "true" ? 'authorized' : 
-                       booking.isAuthorized === "false" ? 'rejected' : 'pending',
-                suggestedPrice: booking.price ? Number(booking.price) : undefined,
-                userResponse: booking.userResponse,
-                createdAt: booking.createdAt || new Date().toISOString()
-              };
-            })
-          );
-          
-          setBookings(employeeBookings);
-        } else {
-          // Fallback to mock data if no employee data
-          setBookings(mockBookings);
+        if (!employeeData.isEmployee || !employeeData.id) {
+          setBookings([]);
+          setLoading(false);
+          return;
         }
+        // Fetch bookings for this employee from backend
+        const response = await axios.post('https://goimro.onrender.com/GetBookServiceByEmployee', {
+          id: employeeData.id,
+          fullname: employeeData.name,
+          number: employeeData.number,
+          email: employeeData.email,
+          password: employeeData.password,
+          goldcard: employeeData.goldcard,
+          service: employeeData.service
+        });
+        // Map backend data to Booking interface
+        const employeeBookings: Booking[] = response.data.map((booking: any) => ({
+          _id: booking.id || booking._id,
+          name: booking.userName || booking.name || 'غير معروف',
+          email: booking.userEmail || booking.email || 'غير معروف',
+          phone: booking.userPhone || booking.phone || 'غير معروف',
+          company: booking.userCompany || booking.company || '',
+          serviceType: booking.service,
+          preferredDate: booking.date,
+          preferredTime: booking.time,
+          message: booking.location,
+          status: booking.isaothorized === "true"
+            ? 'authorized'
+            : booking.isaothorized === "false"
+            ? 'rejected'
+            : 'pending',
+          suggestedPrice: booking.price ? Number(booking.price) : undefined,
+          userResponse: booking.userResponse,
+          createdAt: booking.createdAt || new Date().toISOString()
+        }));
+        setBookings(employeeBookings);
       } catch (error) {
-        console.error('Error fetching employee bookings:', error);
-        toast.error('فشل في جلب الحجوزات');
-        // Fallback to mock data
-        setBookings(mockBookings);
+        toast.error('فشل في جلب حجوزاتك');
+        setBookings([]); // Only use mock data if you want fallback
       } finally {
         setLoading(false);
       }
     };
-    
     fetchEmployeeBookings();
   }, []);
 

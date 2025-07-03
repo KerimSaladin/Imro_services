@@ -132,7 +132,7 @@ export const AdminPanel: React.FC = () => {
               status: booking.isaothorized === "true"
                 ? "authorized"
                 : booking.isaothorized === "false"
-                ? "rejected"
+                ? "pending"
                 : "pending",
               suggestedPrice: booking.price ? Number(booking.price) : undefined,
               userResponse: booking.userResponse || undefined,
@@ -165,7 +165,7 @@ export const AdminPanel: React.FC = () => {
       });
       
       setBookings(bookings.map(booking => 
-        booking._id === bookingId ? { ...booking, status: 'authorized' } : booking
+        booking._id === bookingId ? { ...booking, isaothorized: "true" } : booking
       ));
       toast.success('تم تفويض الحجز بنجاح!');
     } catch (error) {
@@ -400,21 +400,15 @@ export const AdminPanel: React.FC = () => {
                       </div>
                     </div>
 
+                    {/* Action Buttons for Pending Bookings */}
                     {booking.status === 'pending' && (
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 mt-2">
                         <Button
                           onClick={() => authorizeBooking(booking._id)}
                           className="bg-green-600 hover:bg-green-700 text-black"
                         >
                           <CheckIcon className="w-4 h-4 mr-2" />
                           تفويض
-                        </Button>
-                        <Button
-                          onClick={() => rejectBooking(booking._id)}
-                          className="bg-red-600 hover:bg-red-700 text-black"
-                        >
-                          <XIcon className="w-4 h-4 mr-2" />
-                          رفض
                         </Button>
                       </div>
                     )}

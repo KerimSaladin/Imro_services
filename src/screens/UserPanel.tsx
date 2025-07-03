@@ -168,6 +168,47 @@ export const UserPanel: React.FC = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchUserBookings = async () => {
+      setLoading(true);
+      try {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        if (!userData.id) {
+          setBookings([]);
+          setLoading(false);
+          return;
+        }
+        // Fetch all bookings and filter by user ID
+        const response = await axios.get('https://goimro.onrender.com/GetBookService');
+        const userBookings: Booking[] = response.data
+          .filter((booking: any) => booking.userid === userData.id)
+          .map((booking: any) => ({
+            _id: booking.id || booking._id,
+            workerId: booking.employeeId,
+            workerName: booking.employeeName || 'غير معروف',
+            serviceType: booking.service,
+            preferredDate: booking.date,
+            preferredTime: booking.time,
+            message: booking.location,
+            status: booking.isaothorized === "true"
+              ? "authorized"
+              : booking.isaothorized === "false"
+              ? "rejected"
+              : "pending",
+            suggestedPrice: booking.price ? Number(booking.price) : undefined,
+            userResponse: booking.userResponse,
+            createdAt: booking.createdAt || new Date().toISOString()
+          }));
+        setBookings(userBookings);
+      } catch (error) {
+        toast.error('فشل في جلب حجوزاتك');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserBookings();
+  }, []);
+
   const filteredWorkers = workers.filter(worker => {
     const matchesSearch = worker.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          worker.service.toLowerCase().includes(searchTerm.toLowerCase());

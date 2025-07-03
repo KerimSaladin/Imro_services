@@ -30,7 +30,7 @@ export const Login: React.FC = () => {
     try {
       if (data.isEmployee) {
         // Employee login: fetch all employees and check credentials
-        const res = await axios.post('https://goimro.onrender.com/Employee', {
+        const res = await axios.post('https://goimro.onrender.com/EmployeeLogin', {
           email: data.email,
           password: data.password
         });
